@@ -6,9 +6,100 @@ var party_spacing = 30;
 var leader_old_x = 0;
 var leader_old_y = 0;
 
+//set_skillbar("Lead","2","3","4","5","6","7","8","9","10");
+
 
 function f(value, places = 0) {
     return Number.parseFloat(value).toFixed(places);
+}
+
+function scm(to, cmd, args) {
+    if (to === "party") {
+        names = Object.getOwnPropertyNames(parent.party);
+    } else {
+        names = [to];
+    }
+
+    for (name in names) {
+        if (args) {
+            send_local_cm(nam, {command: cmd, args: args})
+        } else if (cmd) {
+            send_local_cm(nam, {command: cmd});
+        }
+    }
+
+
+}
+
+function logger(message) {
+    //todo
+}
+
+const example = {command: 'command', args: {arg1: 0, arg2: 1}};
+
+
+function parse_cm_command(data) {
+    if ("command" in data) {
+        let command = data.command;
+        switch (command.toLowerCase()) {
+            case "atkon": // Turn on Attack Mode
+                attack_mode = true;
+                log("Enabling Attack Mode");
+                break
+
+            case "atkoff": // Turn off Attack Mode
+                log("Disabling Attack Mode");
+                attack_mode = false;
+                break
+
+            case "togatk": // Toggle the Attack Mode
+                log("Toggling Attack Mode");
+                attack_mode = !attack_mode;
+                break
+
+            case "folon": // Turn on Follow Mode
+                log("Enabling Follow Mode");
+                follow_leader = true;
+                break
+
+            case "foloff": // Turn off Follow Mode
+                log("Disabling Follow Mode");
+                follow_leader = false;
+                break
+
+            case "debon": // Turn on debug
+                log("Enabling Debug Mode");
+                debug = true;
+                break
+
+            case "deboff": // Turn off debug
+                log("Disabling Debug Mode");
+                debug = false;
+                break
+
+            case "formation": // Change current party formation
+                // Todo
+                break
+
+            case "goto":
+                break
+
+        }
+    }
+}
+
+function on_cm(name, data) {
+    let online_chars = get_characters().filter((x) => x.online > 0).map((x) => x.name);
+    if (!online_chars.includes(name)) {
+        game_log(`Received UNWANTED CM from: ${name}`);
+        return
+    } else {
+        if (debug) {
+            game_log(`Received CM from: ${name}`);
+        }
+
+    }
+    parse_cm_command(data);
 }
 
 function party_manager() {
@@ -24,7 +115,7 @@ function party_manager() {
     }
 }
 
-function auto_battle(min_xp=100, max_att=160) {
+function auto_battle(min_xp = 100, max_att = 160) {
     let target = get_targeted_monster();
     if (!target) {
         target = get_nearest_monster({min_xp: min_xp, max_att: max_att});

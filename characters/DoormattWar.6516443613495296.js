@@ -1,5 +1,5 @@
 load_code('DMCommon');
-debug = true;
+debug = false;
 follow_leader = true;
 
 if (party_leader) setInterval(party_manager, 10000); // Run every 10 seconds.
